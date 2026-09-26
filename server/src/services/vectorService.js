@@ -1,13 +1,9 @@
-const { ChromaClient } = require("chromadb");
+const { CloudClient } = require("chromadb");
 
-const host = process.env.CHROMA_HOST || "localhost";
-const port = Number(process.env.CHROMA_PORT) || 8001;
-const ssl = process.env.CHROMA_SSL === "true";
-
-const client = new ChromaClient({
-  host,
-  port,
-  ssl,
+const client = new CloudClient({
+  apiKey: process.env.CHROMA_API_KEY,
+  tenant: process.env.CHROMA_TENANT,
+  database: process.env.CHROMA_DATABASE,
 });
 
 let collection = null;
@@ -30,12 +26,7 @@ const getCollection = async () => {
 // Store Embedding
 // ==========================================
 
-const storeEmbedding = async ({
-  id,
-  embedding,
-  document,
-  metadata,
-}) => {
+const storeEmbedding = async ({ id, embedding, document, metadata }) => {
   try {
     const collection = await getCollection();
 
@@ -51,10 +42,7 @@ const storeEmbedding = async ({
 
     return true;
   } catch (error) {
-    console.error(
-      "Store Embedding Error:",
-      error
-    );
+    console.error("Store Embedding Error:", error);
 
     throw error;
   }
@@ -64,11 +52,7 @@ const storeEmbedding = async ({
 // Search Embedding
 // ==========================================
 
-const searchEmbedding = async (
-  embedding,
-  limit = 5,
-  documentId = null
-) => {
+const searchEmbedding = async (embedding, limit = 5, documentId = null) => {
   try {
     const collection = await getCollection();
 
@@ -97,20 +81,12 @@ const searchEmbedding = async (
         where,
       }),
 
-      include: [
-        "documents",
-        "metadatas",
-        "distances",
-      ],
+      include: ["documents", "metadatas", "distances"],
     });
 
     return result;
-
   } catch (error) {
-    console.error(
-      "Search Embedding Error:",
-      error
-    );
+    console.error("Search Embedding Error:", error);
 
     throw error;
   }
@@ -130,16 +106,11 @@ const deleteDocumentEmbeddings = async (documentId) => {
       },
     });
 
-    console.log(
-      `✅ ChromaDB embeddings deleted for document: ${documentId}`
-    );
+    console.log(`✅ ChromaDB embeddings deleted for document: ${documentId}`);
 
     return true;
   } catch (error) {
-    console.error(
-      "ChromaDB Delete Error:",
-      error
-    );
+    console.error("ChromaDB Delete Error:", error);
 
     throw error;
   }
