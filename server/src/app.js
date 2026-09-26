@@ -10,6 +10,7 @@ const billingRoutes = require("./routes/billingRoutes");
 const app = express();
 
 const allowedOrigins = [
+  "http://localhost:3000",
   "http://localhost:5173",
   "http://localhost:5174",
 ];
@@ -24,7 +25,7 @@ app.use(
       return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
-  })
+  }),
 );
 
 app.use(express.json({ limit: "1mb" }));

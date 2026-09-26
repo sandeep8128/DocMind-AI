@@ -1,31 +1,62 @@
 services:
   chromadb:
     image: chromadb/chroma:latest
+
     container_name: chromadb
+
     ports:
       - "8001:8000"
+
     volumes:
       - chroma_data:/data
+
     restart: unless-stopped
 
   backend:
     build:
       context: ./server
+
     container_name: docmind-backend
+
     ports:
       - "8000:8000"
+
+    volumes:
+      - uploads_data:/app/uploads
+
     environment:
       PORT: 8000
       CHROMA_HOST: chromadb
       CHROMA_PORT: 8000
       CHROMA_SSL: "false"
+
     env_file:
       - ./server/.env
+
     depends_on:
       - chromadb
+
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./client
+      args:
+        VITE_API_URL: http://localhost:8000/api
+
+    container_name: docmind-frontend
+
+    ports:
+      - "3000:80"
+
+    depends_on:
+      - backend
+
     restart: unless-stopped
 
 volumes:
   chroma_data:
     external: true
     name: chroma_data
+
+  uploads_data:
