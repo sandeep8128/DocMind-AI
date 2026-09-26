@@ -468,7 +468,7 @@ function Settings() {
         <input
           type={visible ? "text" : "password"}
           name={name}
-          value={value}
+          {/* value={value} */}
           onChange={onChange}
           placeholder={placeholder}
           className="w-full min-w-0 rounded-lg pl-10 pr-10 py-2.5 outline-none font-ui text-[13px]"
